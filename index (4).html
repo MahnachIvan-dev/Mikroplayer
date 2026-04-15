@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>История Беларуси 🎧 | Плеер с поддержкой наушников</title>
+<style>
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif;
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    color: white;
+    min-height: 100vh;
+    padding: 20px 0;
+}
+
+.container {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 16px 20px 24px;
+}
+
+@media (min-width: 768px) {
+    .container {
+        max-width: 720px;
+        padding: 24px 32px;
+    }
+    .player {
+        padding: 32px 28px;
+    }
+    .title {
+        font-size: 1.8rem;
+    }
+    .btn {
+        width: 70px;
+        height: 70px;
+        font-size: 28px;
+    }
+    .play {
+        width: 88px;
+        height: 88px;
+        font-size: 38px;
+    }
+    .item {
+        padding: 16px 22px;
+        font-size: 1.1rem;
+    }
+}
+
+@media (min-width: 1200px) {
+    .container {
+        max-width: 900px;
+    }
+    .btn {
+        width: 80px;
+        height: 80px;
+        font-size: 32px;
+    }
+    .play {
+        width: 100px;
+        height: 100px;
+        font-size: 44px;
+    }
+    .title {
+        font-size: 2rem;
+    }
+    .slider {
+        height: 10px;
+    }
+    .slider::-webkit-slider-thumb {
+        width: 24px;
+        height: 24px;
+    }
+    .time {
+        font-size: 16px;
+    }
+    .item {
+        padding: 18px 24px;
+        font-size: 1.2rem;
+    }
+    .telegram-h1 {
+        font-size: 2rem;
+        padding: 16px 40px;
+    }
+}
+
+.main-title {
+    text-align: center;
+    font-weight: 600;
+    font-size: 1.8rem;
+    margin: 0 0 20px 0;
+    letter-spacing: -0.3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.player {
+    backdrop-filter: blur(20px);
+    background: rgba(255,255,255,0.07);
+    border-radius: 32px;
+    padding: 24px 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    border: 0.5px solid rgba(255,255,255,0.1);
+    margin-bottom: 24px;
+}
+
+.title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, #FFF, #a0e7a0);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    letter-spacing: -0.2px;
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 28px;
+    margin: 12px 0 18px;
+}
+
+.btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    transition: 0.2s;
+    background: rgba(255,255,255,0.12);
+    color: white;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn:active {
+    transform: scale(0.94);
+    background: rgba(255,255,255,0.2);
+}
+
+.play {
+    width: 76px;
+    height: 76px;
+    background: #4CAF50;
+    font-size: 32px;
+    box-shadow: 0 6px 16px rgba(76,175,80,0.3);
+}
+
+.slider-container {
+    margin: 16px 0 8px;
+    position: relative;
+}
+
+.slider {
+    width: 100%;
+    height: 6px;
+    -webkit-appearance: none;
+    background: rgba(255,255,255,0.2);
+    border-radius: 10px;
+    outline: none;
+    cursor: pointer;
+    position: relative;
+    z-index: 2;
+}
+
+.slider::-webkit-slider-runnable-track {
+    height: 6px;
+    background: transparent;
+    border-radius: 10px;
+}
+
+.slider::-moz-range-track {
+    height: 6px;
+    background: transparent;
+    border-radius: 10px;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    background: #4CAF50;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 8px #4CAF50;
+    border: 2px solid white;
+    transition: 0.1s;
+    margin-top: -6px;
+    position: relative;
+    z-index: 3;
+}
+
+.slider::-webkit-slider-thumb:active {
+    transform: scale(1.2);
+}
+
+.slider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    background: #4CAF50;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 0 6px #4CAF50;
+}
+
+.slider::-moz-range-progress {
+    height: 6px;
+    background: linear-gradient(90deg, #4CAF50, #00e676);
+    border-radius: 10px;
+}
+
+.time {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    opacity: 0.75;
+    margin-top: 8px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+.list {
+    margin-top: 20px;
+    border-radius: 28px;
+    overflow: hidden;
+    background: rgba(0,0,0,0.2);
+    backdrop-filter: blur(4px);
+    max-height: 380px;
+    overflow-y: auto;
+}
+
+.item {
+    padding: 14px 18px;
+    background: rgba(255,255,255,0.03);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    cursor: pointer;
+    transition: 0.15s;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.item:active {
+    background: rgba(255,255,255,0.1);
+}
+
+.item:hover {
+    background: rgba(255,255,255,0.07);
+}
+
+.active {
+    background: rgba(76,175,80,0.25);
+    border-left: 4px solid #4CAF50;
+    font-weight: 600;
+}
+
+.active:before {
+    content: "🎧";
+    font-size: 14px;
+}
+
+.telegram-credit {
+    text-align: center;
+    margin-top: 36px;
+    margin-bottom: 10px;
+}
+
+.telegram-h1 {
+    display: inline-block;
+    font-size: 1.7rem;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    margin: 0;
+    padding: 14px 32px;
+    background: linear-gradient(135deg, #ffffff, #eef2ff);
+    border-radius: 80px;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(114, 137, 218, 0.5);
+    backdrop-filter: blur(4px);
+    color: #1f2a48;
+    text-transform: uppercase;
+    font-family: inherit;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: default;
+}
+
+.telegram-h1:hover {
+    transform: scale(1.02);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.35), 0 0 0 2px #4c9eff;
+}
+
+@media (max-width: 480px) {
+    .telegram-h1 {
+        font-size: 1.3rem;
+        padding: 10px 22px;
+    }
+}
+
+.list::-webkit-scrollbar {
+    width: 4px;
+}
+.list::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.05);
+}
+.list::-webkit-scrollbar-thumb {
+    background: #4CAF50;
+    border-radius: 10px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+<h1 class="main-title">🎧 История Беларуси</h1>
+
+<div class="player">
+    <div class="title" id="title">Билет 1</div>
+
+    <div class="controls">
+        <button class="btn prev" id="prevBtn" aria-label="Предыдущий">⏮</button>
+        <button class="btn play" id="playBtn" aria-label="Воспроизвести/Пауза">▶</button>
+        <button class="btn next" id="nextBtn" aria-label="Следующий">⏭</button>
+    </div>
+
+    <div class="slider-container">
+        <input type="range" class="slider" id="seekSlider" value="0" step="0.01" min="0">
+    </div>
+
+    <div class="time">
+        <span id="current">0:00</span>
+        <span id="duration">0:00</span>
+    </div>
+</div>
+
+<div class="list" id="list"></div>
+
+
+
+<audio id="audio" preload="metadata"></audio>
+</div>
+
+<script>
+const tracks = Array.from({length: 25}, (_, i) => ({
+    title: "Билет " + (i + 1),
+    src: "audio/" + (i + 1) + ".mp3"
+}));
+
+const audio = document.getElementById("audio");
+const titleEl = document.getElementById("title");
+const listContainer = document.getElementById("list");
+const playBtn = document.getElementById("playBtn");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+const seekSlider = document.getElementById("seekSlider");
+const currentTimeEl = document.getElementById("current");
+const durationEl = document.getElementById("duration");
+
+let currentTrackIndex = 0;
+let isDraggingSlider = false;
+
+function formatTime(seconds) {
+    if (isNaN(seconds)) return "0:00";
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return mins + ":" + (secs < 10 ? "0" + secs : secs);
+}
+
+function updateSliderProgress() {
+    if (!audio.duration || isNaN(audio.duration) || audio.duration === 0) {
+        seekSlider.style.background = `rgba(255,255,255,0.2)`;
+        return;
+    }
+    const percent = (audio.currentTime / audio.duration) * 100;
+    const gradient = `linear-gradient(90deg, #4CAF50 0%, #00e676 ${percent}%, rgba(255,255,255,0.2) ${percent}%, rgba(255,255,255,0.2) 100%)`;
+    seekSlider.style.background = gradient;
+    seekSlider.style.backgroundSize = '100% 100%';
+    seekSlider.style.backgroundRepeat = 'no-repeat';
+}
+
+function updateSliderAndTime() {
+    if (!isDraggingSlider && audio.duration && isFinite(audio.duration)) {
+        seekSlider.max = audio.duration;
+        seekSlider.value = audio.currentTime;
+        currentTimeEl.innerText = formatTime(audio.currentTime);
+        durationEl.innerText = formatTime(audio.duration);
+        updateSliderProgress();
+    } else if (!isDraggingSlider && audio.duration) {
+        seekSlider.max = audio.duration;
+        durationEl.innerText = formatTime(audio.duration);
+        updateSliderProgress();
+    } else if (!isDraggingSlider) {
+        updateSliderProgress();
+    }
+}
+
+function updatePlayButton() {
+    if (audio.paused) {
+        playBtn.innerHTML = "▶";
+        playBtn.style.background = "#4CAF50";
+    } else {
+        playBtn.innerHTML = "⏸";
+        playBtn.style.background = "#ff9800";
+    }
+}
+
+function renderPlaylist() {
+    listContainer.innerHTML = "";
+    tracks.forEach((track, idx) => {
+        const div = document.createElement("div");
+        div.className = "item" + (idx === currentTrackIndex ? " active" : "");
+        div.innerText = track.title;
+        div.setAttribute('tabindex', '0');
+        div.onclick = () => loadTrack(idx);
+        div.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') loadTrack(idx); };
+        listContainer.appendChild(div);
+    });
+}
+
+function loadTrack(index) {
+    if (index < 0) index = 0;
+    if (index >= tracks.length) index = tracks.length - 1;
+    
+    currentTrackIndex = index;
+    const track = tracks[currentTrackIndex];
+    audio.src = track.src;
+    titleEl.innerText = track.title;
+    
+    seekSlider.value = 0;
+    currentTimeEl.innerText = "0:00";
+    durationEl.innerText = "0:00";
+    seekSlider.style.background = `rgba(255,255,255,0.2)`;
+    
+    renderPlaylist();
+    
+    audio.play().catch(e => {
+        console.log("autoplay blocked, waiting for user gesture");
+        updatePlayButton();
+    });
+    updatePlayButton();
+    
+    if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+            title: track.title,
+            artist: "История Беларуси",
+            album: "Билеты ЦТ",
+            artwork: [{ src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%234CAF50'/%3E%3Ctext x='50' y='67' font-size='50' text-anchor='middle' fill='white'%3E🎧%3C/text%3E%3C/svg%3E", sizes: "96x96" }]
+        });
+    }
+}
+
+seekSlider.addEventListener("input", (e) => {
+    isDraggingSlider = true;
+    const val = e.target.value;
+    currentTimeEl.innerText = formatTime(parseFloat(val));
+    if (audio.duration && isFinite(audio.duration)) {
+        const tempPercent = (parseFloat(val) / audio.duration) * 100;
+        const grad = `linear-gradient(90deg, #4CAF50 0%, #00e676 ${tempPercent}%, rgba(255,255,255,0.2) ${tempPercent}%, rgba(255,255,255,0.2) 100%)`;
+        seekSlider.style.background = grad;
+        audio.currentTime = parseFloat(val);
+    } else {
+        seekSlider.style.background = `rgba(255,255,255,0.2)`;
+    }
+});
+
+seekSlider.addEventListener("change", (e) => {
+    isDraggingSlider = false;
+    const val = e.target.value;
+    if (audio.duration && isFinite(audio.duration)) {
+        audio.currentTime = parseFloat(val);
+        updateSliderProgress();
+    }
+    updateSliderAndTime();
+});
+
+window.addEventListener("mouseup", () => {
+    if (isDraggingSlider) {
+        isDraggingSlider = false;
+        updateSliderAndTime();
+    }
+});
+window.addEventListener("touchend", () => {
+    if (isDraggingSlider) {
+        isDraggingSlider = false;
+        updateSliderAndTime();
+    }
+});
+
+function nextTrack() {
+    let newIndex = (currentTrackIndex + 1) % tracks.length;
+    loadTrack(newIndex);
+}
+
+function prevTrack() {
+    let newIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
+    loadTrack(newIndex);
+}
+
+function togglePlayPause() {
+    if (audio.paused) {
+        audio.play().catch(e => console.log("play error", e));
+    } else {
+        audio.pause();
+    }
+    updatePlayButton();
+}
+
+audio.addEventListener("timeupdate", () => {
+    if (!isDraggingSlider) {
+        updateSliderAndTime();
+    }
+});
+audio.addEventListener("loadedmetadata", () => {
+    if (audio.duration && isFinite(audio.duration)) {
+        seekSlider.max = audio.duration;
+        durationEl.innerText = formatTime(audio.duration);
+        updateSliderProgress();
+    }
+});
+audio.addEventListener("ended", () => {
+    nextTrack();
+});
+audio.addEventListener("play", () => updatePlayButton());
+audio.addEventListener("pause", () => updatePlayButton());
+
+if ('mediaSession' in navigator) {
+    const registerMediaHandlers = () => {
+        navigator.mediaSession.setActionHandler('play', () => {
+            audio.play();
+            updatePlayButton();
+        });
+        navigator.mediaSession.setActionHandler('pause', () => {
+            audio.pause();
+            updatePlayButton();
+        });
+        navigator.mediaSession.setActionHandler('previoustrack', () => {
+            prevTrack();
+        });
+        navigator.mediaSession.setActionHandler('nexttrack', () => {
+            nextTrack();
+        });
+        navigator.mediaSession.setActionHandler('seekbackward', (details) => {
+            if (audio.duration) {
+                audio.currentTime = Math.max(0, audio.currentTime - (details.seekOffset || 10));
+                updateSliderAndTime();
+            }
+        });
+        navigator.mediaSession.setActionHandler('seekforward', (details) => {
+            if (audio.duration) {
+                audio.currentTime = Math.min(audio.duration, audio.currentTime + (details.seekOffset || 10));
+                updateSliderAndTime();
+            }
+        });
+        console.log("MediaSession handlers registered for headphones");
+    };
+    
+    registerMediaHandlers();
+    
+    audio.addEventListener('play', () => {
+        registerMediaHandlers();
+    });
+}
+
+document.addEventListener('keydown', (e) => {
+    const tag = e.target.tagName;
+    if (tag === 'INPUT' || tag === 'BUTTON' || (tag === 'DIV' && e.target.classList?.contains('item'))) return;
+    switch(e.key) {
+        case ' ':
+        case 'Space':
+            e.preventDefault();
+            togglePlayPause();
+            break;
+        case 'ArrowLeft':
+            e.preventDefault();
+            if (audio.duration) {
+                audio.currentTime = Math.max(0, audio.currentTime - 5);
+                updateSliderAndTime();
+            }
+            break;
+        case 'ArrowRight':
+            e.preventDefault();
+            if (audio.duration) {
+                audio.currentTime = Math.min(audio.duration, audio.currentTime + 5);
+                updateSliderAndTime();
+            }
+            break;
+        case 'ArrowUp':
+            e.preventDefault();
+            prevTrack();
+            break;
+        case 'ArrowDown':
+            e.preventDefault();
+            nextTrack();
+            break;
+    }
+});
+
+document.querySelectorAll('.btn, .item, .telegram-h1').forEach(el => el.setAttribute('tabindex', '0'));
+
+function init() {
+    renderPlaylist();
+    loadTrack(0);
+    
+    playBtn.addEventListener("click", togglePlayPause);
+    prevBtn.addEventListener("click", prevTrack);
+    nextBtn.addEventListener("click", nextTrack);
+    
+    audio.addEventListener("canplay", () => {
+        updateSliderProgress();
+    });
+    
+    document.body.addEventListener('click', () => {
+        if (audio.paused && audio.readyState === 0) {
+            audio.load();
+        }
+    }, { once: true });
+}
+
+init();
+</script>
+</body>
+</html>
